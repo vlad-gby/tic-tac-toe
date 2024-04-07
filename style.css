@@ -2,7 +2,24 @@
   box-sizing: border-box;
 }
 
+.board{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 12px;
 
+  background-color: rgb(175, 175, 175);
+  border-radius: 4px;
+  width: 200px;
+  height: 200px;
+  padding: 8px;
+  margin: 0 auto;
+}
 
+.board button{
+  width: auto;
+  height: auto;
+  font-size: 24px;
+}
 
 
