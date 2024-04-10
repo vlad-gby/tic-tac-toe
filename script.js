@@ -20,17 +20,28 @@ const gameModule = (function(){
     UIModule.updateBoard();
   }
 
-  function move(cell){
+  function move(cell, mark = 'X'){
     if(cell instanceof HTMLElement){
       const cellObj = boardFlat.find(obj => obj.cellEl === cell);
       if(cellObj.value === null){
-        cellObj.value = 'X';
+        cellObj.value = mark;
         UIModule.updateBoard();
         if(combinationsModule.checkWinner()) return;
 
-        pcBehaviour.hardMove();
-        if(combinationsModule.checkWinner());
-        UIModule.updateBoard();
+        if(mark === 'X'){
+          const hardness = Math.ceil(Math.random() * 10);
+          if(hardness <= 6){  // HERE YOU CAN ALTER THE HARDNESS
+            pcBehaviour.hardMove();
+            if(combinationsModule.checkWinner());
+            UIModule.updateBoard();
+            console.log('hard')
+          } else{
+            pcBehaviour.randomMove();
+            if(combinationsModule.checkWinner());
+            UIModule.updateBoard();
+            console.log('random')
+          }
+        }
       }
     }
   }
@@ -63,7 +74,7 @@ const gameModule = (function(){
         moveUsing(twosCombinationsPc);
       } else if(twosCombinationsPlayer[0]){
         moveUsing(twosCombinationsPlayer);
-      } else if(combinationsModule.isFirstMove()){
+      } else if(combinationsModule.checkDiagonals()){
         combinationsModule.handleDiagonals();
       } else if(onesCombinationsPlayer[0]){
         moveUsing(onesCombinationsPlayer);
@@ -164,12 +175,25 @@ const combinationsModule = (function(){
     }
   }
 
-  function isFirstMove(){
+  function checkDiagonals(){
+    // CHECK IF IT'S THE FIRST MOVE
     const xCount = boardFlat.reduce((count, cell) => {
       if(cell.value === 'X') return ++count;
       return count;
     }, 0);
-    if(xCount === 1) return true;
+    if(xCount === 1){
+      const diagonals = getWinCombinations().splice(-2, 2);
+      const cornerCells = [
+        diagonals[0][0],
+        diagonals[0][2],
+        diagonals[1][0],
+        diagonals[1][2]
+      ];
+      cornerCells.forEach(cell => {
+        if(cell.value === 'X') return true;
+      });
+      if(diagonals[0][1].value === 'X') return true;
+    }
   }
 
   function handleDiagonals(){
@@ -181,14 +205,20 @@ const combinationsModule = (function(){
       diagonals[1][0],
       diagonals[1][2]
     ];
+
     const isXInCorner = cornerCells.reduce((count, cell) => {
       if(cell.value === 'X') return ++count;
       return count;
     }, 0);
-    if(isXInCorner) gameModule.move(centerCell);
+    if(isXInCorner) {
+      gameModule.move(centerCell.cellEl, 'O');
+      return;
+    };
+
+
     if(centerCell.value === 'X'){
-      const index = Math.floor(Math.random * 4);
-      gameModule.move(cornerCells[index]);
+      const index = Math.floor(Math.random() * 4);
+      gameModule.move(cornerCells[index].cellEl, 'O');
     }
   }
 
@@ -197,7 +227,7 @@ const combinationsModule = (function(){
     getOneInRows,
     getTwoinRows,
     checkWinner,
-    isFirstMove,
+    checkDiagonals,
     handleDiagonals
   }
 })();
