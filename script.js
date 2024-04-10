@@ -30,7 +30,7 @@ const gameModule = (function(){
 
         if(mark === 'X'){
           const hardness = Math.ceil(Math.random() * 10);
-          if(hardness <= 6){  // HERE YOU CAN ALTER THE HARDNESS
+          if(hardness <= 10){  // HERE YOU CAN ALTER THE HARDNESS
             pcBehaviour.hardMove();
             if(combinationsModule.checkWinner());
             UIModule.updateBoard();
