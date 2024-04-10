@@ -1,6 +1,3 @@
-const registrationModule = (function(){
-
-})();
 
 const board = [
   [{value: null}, {value: null}, {value: null}],
@@ -8,6 +5,7 @@ const board = [
   [{value: null}, {value: null}, {value: null}]
 ];
 const boardFlat = board[0].concat(board[1], board[2]);
+let mode = 'single';
 
 // -------------------------------------------
 
@@ -16,6 +14,8 @@ const gameModule = (function(){
   function newGame(){
     boardFlat.forEach(cell => {
       cell.value = null;
+      cell.cellEl.classList.remove('green');
+      cell.cellEl.classList.remove('red');
     });
     UIModule.updateBoard();
   }
@@ -30,7 +30,7 @@ const gameModule = (function(){
 
         if(mark === 'X'){
           const hardness = Math.ceil(Math.random() * 10);
-          if(hardness <= 10){  // HERE YOU CAN ALTER THE HARDNESS
+          if(hardness <= 0){  // HERE YOU CAN ALTER THE HARDNESS
             pcBehaviour.hardMove();
             combinationsModule.checkWinner();
             UIModule.updateBoard();
@@ -42,6 +42,10 @@ const gameModule = (function(){
         }
       }
     }
+  }
+
+  const playerBehaviour = {
+
   }
 
   const pcBehaviour = {
@@ -158,15 +162,30 @@ const combinationsModule = (function(){
 
   function checkWinner(){
     const combinations = getWinCombinations();
+    const overlay = document.querySelector('.overlay');
+    function newGameAfterDelay(){
+      setTimeout(() => {
+        gameModule.newGame();
+      }, 1000);
+    }
+
     for(let i = 0; i < combinations.length; i++){
       let [one, two, three] = combinations[i];
 
       if(one.value === two.value && two.value === three.value){
         if(one.value === 'X'){
-          console.log('You won!');
+          [one,two,three].forEach(cell => {
+            cell.cellEl.classList.add('green');
+          });
+          overlay.classList.remove('no-display');
+          newGameAfterDelay();
           return 1;
         } else if(one.value === 'O'){
-          console.log('PC won!');
+          [one,two,three].forEach(cell => {
+            cell.cellEl.classList.add('red');
+          });
+          overlay.classList.remove('no-display');
+          newGameAfterDelay();
           return 1;
         }
       }
@@ -248,15 +267,13 @@ const combinationsModule = (function(){
 const UIModule = (function(){
 
   // DIALOG:
-  const dialog = document.querySelector('dialog');
   const joke = document.querySelector('.joke');
   const main = document.querySelector('.dial-main');
-  const hideJoke = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      joke.classList.add('no-display');
-      main.classList.remove('no-display');
-    }, 1700);
-  });
+  
+  setTimeout(() => {
+    joke.classList.add('no-display');
+    main.classList.remove('no-display');
+  }, 1700);
 
   // ---------------
 
@@ -265,6 +282,10 @@ const UIModule = (function(){
 
   const replay = document.querySelector('.replay');
   const btns = document.querySelectorAll('.btns button');
+  const singleBtn = document.querySelector('.single');
+  const friendBtn = document.querySelector('.with-friend');
+
+
 
   btns.forEach(button => {
     button.addEventListener('mouseover', e => {
@@ -279,7 +300,7 @@ const UIModule = (function(){
   });
 
   replay.addEventListener('mouseover', e => {
-    replay.style.backgroundColor = 'rgb(184, 223, 247)';
+    replay.style.backgroundColor = '#029139';
   });
   replay.addEventListener('mouseout', e => {
     replay.style.backgroundColor = 'rgb(255, 255, 255)';

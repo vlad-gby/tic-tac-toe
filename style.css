@@ -17,6 +17,8 @@
   --clr-semi-dark-blue: #04376A;
   --clr-blue: #025891;
   --clr-light-blue: #adc7d7;
+  --clr-red: #914202;
+  --clr-green: #029139;
   --font-spacemono-bold: 'SpaceMono-Bold', 'Roboto', system-ui, sans-serif;
   --font-spacemono-regular: 'SpaceMono-Regular', 'Roboto', system-ui, sans-serif;
 }
@@ -40,6 +42,14 @@ main{
   display: grid;
   grid-template-columns: 8rem 18rem 8rem;
   justify-content: center;
+}
+
+.overlay{
+  position: absolute;
+  width: 18rem;
+  height: 18rem;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .board{
@@ -116,7 +126,7 @@ dialog{
   top: 0;
   height: 100vh;
   width: 100vw;
-  padding: 1rem;
+  padding: 3rem 1rem;
   background-color: var(--clr-dark-blue);
   border: none;
   color: var(--clr-light-blue);
@@ -136,30 +146,41 @@ dialog span{
 .no-display{
   display: none !important;
 }
+.green{
+  background-color: var(--clr-green) !important;
+}
+.red{
+  background-color: var(--clr-red) !important;
+}
 .dial-main{
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2rem;
-  padding: 1rem;
+  padding-top: 10vh;
 }
 .dial-main h1{
-  font-size: 0.5em;
+  font-size: 0.6em;
+  margin-bottom: 1em;
+  text-align: center;
 }
 .dial-main h2{
-  font-size: 0.3em;
+  font-size: 0.2em;
+}
+
+.btns{
+  display: flex;
+  gap: 1em;
 }
 
 .btns button{
-  font-size: 0.4em;
+  font-size: 0.3em;
   padding: 0.2em 0.5em;
   font-family: var(--font-spacemono-bold);
   border: none;
   border-radius: 0.1em;
   background-color: var(--clr-light-blue);
   cursor: pointer;
-}
-.btns{
-  height: fit-content;
+
 }
 
