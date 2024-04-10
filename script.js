@@ -32,14 +32,12 @@ const gameModule = (function(){
           const hardness = Math.ceil(Math.random() * 10);
           if(hardness <= 10){  // HERE YOU CAN ALTER THE HARDNESS
             pcBehaviour.hardMove();
-            if(combinationsModule.checkWinner());
+            combinationsModule.checkWinner();
             UIModule.updateBoard();
-            console.log('hard')
           } else{
             pcBehaviour.randomMove();
-            if(combinationsModule.checkWinner());
+            combinationsModule.checkWinner();
             UIModule.updateBoard();
-            console.log('random')
           }
         }
       }
@@ -75,7 +73,7 @@ const gameModule = (function(){
       } else if(twosCombinationsPlayer[0]){
         moveUsing(twosCombinationsPlayer);
       } else if(combinationsModule.checkDiagonals()){
-        combinationsModule.handleDiagonals();
+        combinationsModule.handleDiagonals(combinationsModule.checkDiagonals());
       } else if(onesCombinationsPlayer[0]){
         moveUsing(onesCombinationsPlayer);
       } else{
@@ -176,35 +174,54 @@ const combinationsModule = (function(){
   }
 
   function checkDiagonals(){
-    // CHECK IF IT'S THE FIRST MOVE
+    // CHECK IF IT'S THE FIRST OR SECOND MOVE
     const xCount = boardFlat.reduce((count, cell) => {
       if(cell.value === 'X') return ++count;
       return count;
     }, 0);
-    if(xCount === 1){
+    if(xCount === 1 || xCount === 2){
       const diagonals = getWinCombinations().splice(-2, 2);
+      const centerCell = diagonals[0][1];
       const cornerCells = [
         diagonals[0][0],
         diagonals[0][2],
         diagonals[1][0],
         diagonals[1][2]
       ];
-      cornerCells.forEach(cell => {
-        if(cell.value === 'X') return true;
-      });
-      if(diagonals[0][1].value === 'X') return true;
+      for(let i = 0; i < cornerCells.length; i++){
+        if(cornerCells[i].value === 'X') return [cornerCells, centerCell];
+      }
+      if(centerCell.value === 'X') return [cornerCells, centerCell];
     }
   }
 
-  function handleDiagonals(){
-    const diagonals = getWinCombinations().splice(-2, 2);
-    const centerCell = diagonals[0][1];
-    const cornerCells = [
-      diagonals[0][0],
-      diagonals[0][2],
-      diagonals[1][0],
-      diagonals[1][2]
-    ];
+  function handleDiagonals(arrays){
+    const [cornerCells, centerCell] = arrays;
+
+    const cornerXs = cornerCells.reduce((count, cell) => {
+      if(cell.value === 'X') return ++count;
+      return count;
+    }, 0);
+
+    if(cornerXs === 2){
+      let count = 0;
+      while(true){
+        const ind = Math.floor(Math.random() * 9);
+        if(boardFlat[ind].value === null && 
+        !cornerCells.includes(boardFlat[ind])){
+          gameModule.move(boardFlat[ind].cellEl, 'O');
+          return;
+        }
+        count++;
+        if(count === 100) break;
+      }
+    }
+
+    if(centerCell.value !== null){
+      const ind = Math.floor(Math.random() * 4);
+      gameModule.move(cornerCells[ind].cellEl, 'O');
+      return;
+    }
 
     const isXInCorner = cornerCells.reduce((count, cell) => {
       if(cell.value === 'X') return ++count;
@@ -214,12 +231,6 @@ const combinationsModule = (function(){
       gameModule.move(centerCell.cellEl, 'O');
       return;
     };
-
-
-    if(centerCell.value === 'X'){
-      const index = Math.floor(Math.random() * 4);
-      gameModule.move(cornerCells[index].cellEl, 'O');
-    }
   }
 
   return {
