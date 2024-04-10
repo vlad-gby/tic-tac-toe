@@ -1,25 +1,103 @@
+@font-face {
+  font-family: 'SpaceMono-Bold';
+  src: url(SpaceMono-Bold.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'SpaceMono-Regular';
+  src: url(SpaceMono-Regular.ttf) format('truetype');
+}
+
 *, *::after, *::before{
   box-sizing: border-box;
+}
+:root{
+  font-size: min(3vw, 24px);
+
+  --clr-dark-blue: #011D49;
+  --clr-semi-dark-blue: #04376A;
+  --clr-blue: #025891;
+  --clr-light-blue: #ADC7D7;
+  --font-spacemono-bold: 'SpaceMono-Bold', 'Roboto', system-ui, sans-serif;
+  --font-spacemono-regular: 'SpaceMono-Regular', 'Roboto', system-ui, sans-serif;
+}
+
+body{
+  background-color: var(--clr-light-blue);
+  background-image: url(img/background.svg);
+  background-size: 20%;
+  color: var(--clr-dark-blue);
+}
+
+.phrase{
+  font-size: 2rem;
+  font-family: var(--font-spacemono-bold);
+  text-align: center;
+  margin: 0.5rem 0 1.5rem 0;
+}
+
+main{
+  display: grid;
+  grid-template-columns: 8rem 18rem 8rem;
+  justify-content: center;
 }
 
 .board{
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
-  gap: 12px;
+  gap: 1rem;
 
-  background-color: rgb(175, 175, 175);
-  border-radius: 4px;
-  width: 200px;
-  height: 200px;
-  padding: 8px;
-  margin: 0 auto;
+  background-color: var(--clr-semi-dark-blue);
+  border-radius: .5rem;
+  width: 18rem;
+  height: 18rem;
+  padding: 1rem;
 }
 
 .board button{
   width: auto;
   height: auto;
   font-size: 24px;
+  background-color: var(--clr-blue);
+  outline: none;
+  border: none;
+  padding: 0;
+}
+button.X{
+  background-image: url(img/cross.svg);
+  background-position: center;
+  background-size: cover;
+}
+button.O{
+  background-image: url(img/circle.svg);
+  background-position: center;
+  background-size: cover;
 }
 
+.score{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 
+  font-size: 1rem;
+  font-family: var(--font-spacemono-regular);
+}
+
+.stick{
+  width: 5rem;
+  height: 5rem;
+  background-color: white;
+}
+
+.replay{
+  display: block;
+  font-size: 2.5rem;
+  font-family: var(--font-spacemono-bold);
+  border: none;
+  border-radius: .5rem;
+  padding: .3rem 2rem;
+  margin: 16px auto 0 auto;
+  background-color: rgb(255, 255, 255);
+  cursor: pointer;
+}

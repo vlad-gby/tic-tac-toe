@@ -32,8 +32,6 @@ const gameModule = (function(){
         if(combinationsModule.checkWinner());
         UIModule.updateBoard();
       }
-    }else{
-      console.log('move func input has to be html el')
     }
   }
 
@@ -56,23 +54,23 @@ const gameModule = (function(){
       const twosCombinationsPlayer = combinationsModule.getTwoinRows('X');
       const twosCombinationsPc = combinationsModule.getTwoinRows('O');
 
+      function moveUsing(combinationSet){
+        const combIndex = Math.floor(Math.random() * combinationSet.length);
+        combinationsModule.enterToAnyNull(combinationSet[combIndex], 'O');
+      }
+
       if(twosCombinationsPc[0]){
-        const combIndex = Math.floor(Math.random() * twosCombinationsPc.length);
-        combinationsModule.enterToAnyNull(twosCombinationsPc[combIndex], 'O');
-
-        UIModule.updateBoard();
+        moveUsing(twosCombinationsPc);
       } else if(twosCombinationsPlayer[0]){
-        const combIndex = Math.floor(Math.random() * twosCombinationsPlayer.length);
-        combinationsModule.enterToAnyNull(twosCombinationsPlayer[combIndex], 'O');
-
-        UIModule.updateBoard();
+        moveUsing(twosCombinationsPlayer);
+      } else if(combinationsModule.isFirstMove()){
+        combinationsModule.handleDiagonals();
       } else if(onesCombinationsPlayer[0]){
-        const combIndex = Math.floor(Math.random() * onesCombinationsPlayer.length);
-        combinationsModule.enterToAnyNull(onesCombinationsPlayer[combIndex], 'O');
-        UIModule.updateBoard();
+        moveUsing(onesCombinationsPlayer);
       } else{
         this.randomMove();
       }
+      UIModule.updateBoard();
     }
   }
 
@@ -146,8 +144,6 @@ const combinationsModule = (function(){
     } else if(nulls.length === 2){
       const num = Math.floor(Math.random() * 2);
       nulls[num].value = mark;
-    }else{
-      console.log("Wrong trio");
     }
   }
 
@@ -155,11 +151,8 @@ const combinationsModule = (function(){
     const combinations = getWinCombinations();
     for(let i = 0; i < combinations.length; i++){
       let [one, two, three] = combinations[i];
-      console.log(one.value, two.value, three.value)
-      if(one.value === two.value === three.value){
-        console.log('here it is')
-      }
-      if(one.value === two.value === three.value){
+
+      if(one.value === two.value && two.value === three.value){
         if(one.value === 'X'){
           console.log('You won!');
           return 1;
@@ -171,38 +164,87 @@ const combinationsModule = (function(){
     }
   }
 
+  function isFirstMove(){
+    const xCount = boardFlat.reduce((count, cell) => {
+      if(cell.value === 'X') return ++count;
+      return count;
+    }, 0);
+    if(xCount === 1) return true;
+  }
+
+  function handleDiagonals(){
+    const diagonals = getWinCombinations().splice(-2, 2);
+    const centerCell = diagonals[0][1];
+    const cornerCells = [
+      diagonals[0][0],
+      diagonals[0][2],
+      diagonals[1][0],
+      diagonals[1][2]
+    ];
+    const isXInCorner = cornerCells.reduce((count, cell) => {
+      if(cell.value === 'X') return ++count;
+      return count;
+    }, 0);
+    if(isXInCorner) gameModule.move(centerCell);
+    if(centerCell.value === 'X'){
+      const index = Math.floor(Math.random * 4);
+      gameModule.move(cornerCells[index]);
+    }
+  }
+
   return {
     enterToAnyNull,
     getOneInRows,
     getTwoinRows,
-    checkWinner
+    checkWinner,
+    isFirstMove,
+    handleDiagonals
   }
 })();
 
 // -------------------------------------------
 
 const UIModule = (function(){
+
+  // EVENT LISTENERS:
+
+  const replay = document.querySelector('.replay');
+
+  replay.addEventListener('mouseover', e => {
+    replay.style.backgroundColor = 'rgb(184, 223, 247)';
+  });
+  replay.addEventListener('mouseout', e => {
+    replay.style.backgroundColor = 'rgb(255, 255, 255)';
+  });
+  replay.addEventListener('mouseup', e => {
+    gameModule.newGame();
+  });
+
+  // ----------------
+
+
   const btnCells = document.querySelectorAll('.board button');
 
-for(let i = 0; i < 9; i++){
-  boardFlat[i].cellEl = btnCells[i];
-  btnCells[i].addEventListener('mouseup', e => {
-    gameModule.move(btnCells[i]);
-  });
-}
+  for(let i = 0; i < 9; i++){
+    boardFlat[i].cellEl = btnCells[i];
+    btnCells[i].addEventListener('mouseup', e => {
+      gameModule.move(btnCells[i]);
+    });
+  }
 
   function updateBoard(){
-    const buttonsValues = board[0].concat(board[1], board[2]);
     for(let i = 0; i < 9; i++){
-      if(buttonsValues[i]){
-        btnCells[i].textContent = buttonsValues[i].value;
+      if(boardFlat[i].value === 'X'){
+        boardFlat[i].cellEl.classList.add('X');
+      } else if(boardFlat[i].value === 'O'){
+        boardFlat[i].cellEl.classList.add('O');
+      } else if(boardFlat[i].value === null){
+        boardFlat[i].cellEl.classList.remove('O');
+        boardFlat[i].cellEl.classList.remove('X');
       }
-
     }
   }
   updateBoard();
-
-
 
   return {
     updateBoard
