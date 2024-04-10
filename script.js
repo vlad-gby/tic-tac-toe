@@ -247,9 +247,36 @@ const combinationsModule = (function(){
 
 const UIModule = (function(){
 
+  // DIALOG:
+  const dialog = document.querySelector('dialog');
+  const joke = document.querySelector('.joke');
+  const main = document.querySelector('.dial-main');
+  const hideJoke = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      joke.classList.add('no-display');
+      main.classList.remove('no-display');
+    }, 1700);
+  });
+
+  // ---------------
+
+
   // EVENT LISTENERS:
 
   const replay = document.querySelector('.replay');
+  const btns = document.querySelectorAll('.btns button');
+
+  btns.forEach(button => {
+    button.addEventListener('mouseover', e => {
+      button.style.backgroundColor = 'rgb(2, 88, 145)';
+    });
+    button.addEventListener('mouseout', e => {
+      button.style.backgroundColor = 'rgb(173, 199, 215)';
+    });
+    button.addEventListener('mouseup', e => {
+      gameModule.newGame();
+    });
+  });
 
   replay.addEventListener('mouseover', e => {
     replay.style.backgroundColor = 'rgb(184, 223, 247)';
@@ -262,7 +289,6 @@ const UIModule = (function(){
   });
 
   // ----------------
-
 
   const btnCells = document.querySelectorAll('.board button');
 

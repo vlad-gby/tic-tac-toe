@@ -16,7 +16,7 @@
   --clr-dark-blue: #011D49;
   --clr-semi-dark-blue: #04376A;
   --clr-blue: #025891;
-  --clr-light-blue: #ADC7D7;
+  --clr-light-blue: #adc7d7;
   --font-spacemono-bold: 'SpaceMono-Bold', 'Roboto', system-ui, sans-serif;
   --font-spacemono-regular: 'SpaceMono-Regular', 'Roboto', system-ui, sans-serif;
 }
@@ -113,7 +113,53 @@ button.O::after{
 
 dialog{
   position: fixed;
+  top: 0;
   height: 100vh;
   width: 100vw;
+  padding: 1rem;
   background-color: var(--clr-dark-blue);
+  border: none;
+  color: var(--clr-light-blue);
+  font-family: var(--font-spacemono-regular);
+  font-size: 10vw;
 }
+dialog > h1{
+  font-size: 1em;
+  text-align: center;
+  margin-top: 5rem;
+}
+dialog span{
+  font-size: 1.2em;
+  font-family: var(--font-spacemono-bold);
+  color: rgb(176, 65, 29);
+}
+.no-display{
+  display: none !important;
+}
+.dial-main{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 1rem;
+}
+.dial-main h1{
+  font-size: 0.5em;
+}
+.dial-main h2{
+  font-size: 0.3em;
+}
+
+.btns button{
+  font-size: 0.4em;
+  padding: 0.2em 0.5em;
+  font-family: var(--font-spacemono-bold);
+  border: none;
+  border-radius: 0.1em;
+  background-color: var(--clr-light-blue);
+  cursor: pointer;
+}
+.btns{
+  height: fit-content;
+}
+
