@@ -68,44 +68,46 @@ const gameModule = (function(){
       UIModule.updateBoard();
       checkWinner();
     }
+  }
 
-    function checkWinner(){
-      const combinations = getWinCombinations();
-      const overlay = document.querySelector('.overlay');
+  function checkWinner(){
+    const combinations = getWinCombinations();
+    const overlay = document.querySelector('.overlay');
 
-      function newGameAfterDelay(){
-        overlay.classList.remove('no-display');
-        setTimeout(() => {
-          gameModule.newGame();
-          overlay.classList.add('no-display');
-        }, 1000);
-      }
-  
-      for(let i = 0; i < combinations.length; i++){
-        let [one, two, three] = combinations[i];
-  
-        if(one.value === two.value && two.value === three.value){
-          if(one.value === 'X'){
-            [one,two,three].forEach(cell => {
-              cell.cellEl.classList.add('green');
-            });
-            newGameAfterDelay();
-            return 1;
-          } else if(one.value === 'O'){
-            [one,two,three].forEach(cell => {
-              cell.cellEl.classList.add('red');
-            });
-            newGameAfterDelay();
-            return 1;
-          }
+    function newGameAfterDelay(me){
+      overlay.classList.remove('no-display');
+      setTimeout(() => {
+        newGame();
+        overlay.classList.add('no-display');
+        if(me === 'player') scoreModule.increasePlayerScore();
+        if(me === 'pc') scoreModule.increasePcScore();
+      }, 1000);
+    }
+
+    for(let i = 0; i < combinations.length; i++){
+      let [one, two, three] = combinations[i];
+
+      if(one.value === two.value && two.value === three.value){
+        if(one.value === 'X'){
+          [one,two,three].forEach(cell => {
+            cell.cellEl.classList.add('green');
+          });
+          newGameAfterDelay('player');
+          return 1;
+        } else if(one.value === 'O'){
+          [one,two,three].forEach(cell => {
+            cell.cellEl.classList.add('red');
+          });
+          newGameAfterDelay('pc');
+          return 1;
         }
       }
-      
-      // CHECK IF FULL
-      const any = boardFlat.find(cell => cell.value === null);
-      if(!any){
-        newGameAfterDelay();
-      }
+    }
+    
+    // CHECK IF FULL
+    const any = boardFlat.find(cell => cell.value === null);
+    if(!any){
+      newGameAfterDelay();
     }
   }
 
@@ -284,15 +286,41 @@ const pcBehaviourModule = (function(){
 })();
 
 const scoreModule = (function(){
-  function calcScore(score){
-    const fives = Math.floor(score / 5);
-    const last = score % 5;
-    return [fives, last];
-  }
+  function updateScores(){
+    const forPlayer = [Math.floor(playerScore / 5), playerScore % 5];
+    const forPc = [Math.floor(pcScore / 5), pcScore % 5];
 
+    update(forPlayer, col1);
+    update(forPc, col2);
+  }
+  function update(formattedData, col){
+    if(formattedData[0]){
+      for(let i = 0; i < formattedData[0]; i++){
+        col[i].classList.add('score-5');
+      }
+      col[formattedData[0]].classList.add(`score-${formattedData[1]}`);
+    } else{
+      col[0].classList.add(`score-${formattedData[1]}`);
+    }
+  }
+  function increasePcScore(){
+    ++pcScore;
+    updateScores();
+  }
+  function increasePlayerScore(){
+    ++playerScore;
+    updateScores();
+  }
+  
+  const col1 = document.querySelectorAll('.col-1 div');
+  const col2 = document.querySelectorAll('.col-2 div');
   let pcScore = 0;
   let playerScore = 0;
 
+  return {
+    increasePcScore,
+    increasePlayerScore,
+  }
 
 })();
 
@@ -316,7 +344,6 @@ const UIModule = (function(){
 
   const replay = document.querySelector('.replay');
   const mode = document.querySelectorAll('.mode button');
-  const singleBtn = document.querySelector('.single');
   const friendBtn = document.querySelector('.with-friend');
   const labels = document.querySelectorAll('.level-radio-box label');
 
@@ -370,9 +397,6 @@ const UIModule = (function(){
         boardFlat[i].cellEl.classList.remove('X');
       }
     }
-  }
-  function updateScore(){
-
   }
   updateBoard();
 

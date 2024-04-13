@@ -57,6 +57,7 @@ body{
   font-family: var(--font-spacemono-bold);
   color: var(--clr-light-blue);
   user-select: none;
+  cursor: pointer;
 }
 .level-radio-box label:has(:checked){
   background-color: var(--clr-dark-blue);
