@@ -134,7 +134,23 @@ button.O::after{
 .stick{
   width: 4.5rem;
   height: 4.5rem;
-  background-color: white;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.score-1{
+  background-image: url(img/1.svg);
+}
+.score-2{
+  background-image: url(img/2.svg);
+}
+.score-3{
+  background-image: url(img/3.svg);
+}
+.score-4{
+  background-image: url(img/4.svg);
+}
+.score-5{
+  background-image: url(img/5.svg);
 }
 
 .replay{
