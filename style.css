@@ -28,14 +28,41 @@ body{
   background-image: url(img/background.svg);
   background-size: 20%;
   color: var(--clr-dark-blue);
-  padding-top: 0.5rem;
+  margin: 0;
 }
 
 .phrase{
   font-size: 2rem;
   font-family: var(--font-spacemono-bold);
   text-align: center;
-  margin-bottom: 1.5rem ;
+  margin-bottom: 1rem ;
+}
+.level-box{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  font-family: var(--font-spacemono-regular);
+  margin-bottom: 0.5rem;
+}
+.level-radio-box{
+  display: flex;
+  background-color: var(--clr-blue);
+  border-radius: 0.3rem;
+}
+.level-radio-box label{
+  font-size: 0.9rem;
+  padding: 0.4em 1rem;
+  border-radius: 0.3rem;
+  font-family: var(--font-spacemono-bold);
+  color: var(--clr-light-blue);
+  user-select: none;
+}
+.level-radio-box label:has(:checked){
+  background-color: var(--clr-dark-blue);
+}
+.level-radio-box input{
+  display: none;
 }
 
 main{
@@ -101,11 +128,12 @@ button.O::after{
 
   font-size: 1rem;
   font-family: var(--font-spacemono-regular);
+  margin-top: 0.3rem;
 }
 
 .stick{
-  width: 5rem;
-  height: 5rem;
+  width: 4.5rem;
+  height: 4.5rem;
   background-color: white;
 }
 
@@ -116,7 +144,7 @@ button.O::after{
   border: none;
   border-radius: .5rem;
   padding: 0 2rem;
-  margin: 16px auto 0 auto;
+  margin: 1rem auto 0 auto;
   background-color: rgb(255, 255, 255);
   cursor: pointer;
 }
@@ -183,4 +211,5 @@ dialog span{
   cursor: pointer;
 
 }
+
 

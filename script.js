@@ -20,7 +20,14 @@ const gameModule = (function(){
     UIModule.updateBoard();
   }
 
-  function move(cell, mark = 'X'){
+  function move(cell, mark = 'X', simple = false){
+    if(simple && cell instanceof HTMLElement){
+      const cellObj = boardFlat.find(obj => obj.cellEl === cell);
+      cellObj.value = mark;
+      UIModule.updateBoard();
+      return;
+    }
+
     if(cell instanceof HTMLElement){
       const cellObj = boardFlat.find(obj => obj.cellEl === cell);
       if(cellObj.value === null){
@@ -28,24 +35,24 @@ const gameModule = (function(){
         UIModule.updateBoard();
         if(combinationsModule.checkWinner()) return;
 
-        if(mark === 'X'){
-          const hardness = Math.ceil(Math.random() * 10);
-          if(hardness <= 0){  // HERE YOU CAN ALTER THE HARDNESS
-            pcBehaviour.hardMove();
-            combinationsModule.checkWinner();
-            UIModule.updateBoard();
-          } else{
+        switch(UIModule.getGameLevel()){
+          case 'easy':
             pcBehaviour.randomMove();
             combinationsModule.checkWinner();
             UIModule.updateBoard();
-          }
+          break;
+          case 'intermediate':
+            pcBehaviour.hardMove(5);
+            combinationsModule.checkWinner();
+            UIModule.updateBoard();
+            break;
+          case 'impossible':
+            pcBehaviour.hardMove(10);
+            combinationsModule.checkWinner();
+            UIModule.updateBoard();
         }
       }
     }
-  }
-
-  const playerBehaviour = {
-
   }
 
   const pcBehaviour = {
@@ -62,7 +69,7 @@ const gameModule = (function(){
         }
       }
     },
-    hardMove(){
+    hardMove(number = 10){
       const onesCombinationsPlayer = combinationsModule.getOneInRows('X');
       const twosCombinationsPlayer = combinationsModule.getTwoinRows('X');
       const twosCombinationsPc = combinationsModule.getTwoinRows('O');
@@ -72,19 +79,28 @@ const gameModule = (function(){
         combinationsModule.enterToAnyNull(combinationSet[combIndex], 'O');
       }
 
-      if(twosCombinationsPc[0]){
+      const hardness = [];
+      for(let i = 0; i < 4; i++){
+        hardness.push(Math.ceil(Math.random() * 10));
+      }
+      
+      if(hardness[0] <= number + 3 && twosCombinationsPc[0]){
         moveUsing(twosCombinationsPc);
-      } else if(twosCombinationsPlayer[0]){
+        console.log('hard move', hardness[0]);
+      } else if(hardness[1] <= number + 2 && twosCombinationsPlayer[0]){
         moveUsing(twosCombinationsPlayer);
-      } else if(combinationsModule.checkDiagonals()){
+        console.log('hard move', hardness[1]);
+      } else if(hardness[2] <= number && combinationsModule.checkDiagonals()){
         combinationsModule.handleDiagonals(combinationsModule.checkDiagonals());
-      } else if(onesCombinationsPlayer[0]){
+        console.log('hard move', hardness[2]);
+      } else if(hardness[3] <= number && onesCombinationsPlayer[0]){
         moveUsing(onesCombinationsPlayer);
+        console.log('hard move', hardness[3]);
       } else{
         this.randomMove();
       }
       UIModule.updateBoard();
-    }
+    },
   }
 
   return {
@@ -164,8 +180,10 @@ const combinationsModule = (function(){
     const combinations = getWinCombinations();
     const overlay = document.querySelector('.overlay');
     function newGameAfterDelay(){
+      overlay.classList.remove('no-display');
       setTimeout(() => {
         gameModule.newGame();
+        overlay.classList.add('no-display');
       }, 1000);
     }
 
@@ -177,18 +195,22 @@ const combinationsModule = (function(){
           [one,two,three].forEach(cell => {
             cell.cellEl.classList.add('green');
           });
-          overlay.classList.remove('no-display');
           newGameAfterDelay();
           return 1;
         } else if(one.value === 'O'){
           [one,two,three].forEach(cell => {
             cell.cellEl.classList.add('red');
           });
-          overlay.classList.remove('no-display');
           newGameAfterDelay();
           return 1;
         }
       }
+    }
+    
+    // CHECK IF FULL
+    const any = boardFlat.find(cell => cell.value === null);
+    if(!any){
+      newGameAfterDelay();
     }
   }
 
@@ -228,7 +250,7 @@ const combinationsModule = (function(){
         const ind = Math.floor(Math.random() * 9);
         if(boardFlat[ind].value === null && 
         !cornerCells.includes(boardFlat[ind])){
-          gameModule.move(boardFlat[ind].cellEl, 'O');
+          gameModule.move(boardFlat[ind].cellEl, 'O', true);
           return;
         }
         count++;
@@ -237,8 +259,12 @@ const combinationsModule = (function(){
     }
 
     if(centerCell.value !== null){
-      const ind = Math.floor(Math.random() * 4);
-      gameModule.move(cornerCells[ind].cellEl, 'O');
+      function getCell(){
+        const ind = Math.floor(Math.random() * 4);
+        if(cornerCells[ind].value === null) return cornerCells[ind].cellEl;
+        return getCell();
+      }
+      gameModule.move(getCell(), 'O', true);
       return;
     }
 
@@ -247,7 +273,7 @@ const combinationsModule = (function(){
       return count;
     }, 0);
     if(isXInCorner) {
-      gameModule.move(centerCell.cellEl, 'O');
+      gameModule.move(centerCell.cellEl, 'O', true);
       return;
     };
   }
@@ -284,8 +310,17 @@ const UIModule = (function(){
   const btns = document.querySelectorAll('.btns button');
   const singleBtn = document.querySelector('.single');
   const friendBtn = document.querySelector('.with-friend');
+  const labels = document.querySelectorAll('.level-radio-box label');
 
-
+  let gameLevel = 'easy';
+  labels.forEach(radio => {
+      radio.addEventListener('mouseup', e => {
+      gameLevel = radio.lastChild.id;
+    });
+  });
+  function getGameLevel(){
+    return gameLevel;
+  }
 
   btns.forEach(button => {
     button.addEventListener('mouseover', e => {
@@ -335,7 +370,8 @@ const UIModule = (function(){
   updateBoard();
 
   return {
-    updateBoard
+    updateBoard,
+    getGameLevel
   }
 })();
 

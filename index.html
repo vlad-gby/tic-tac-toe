@@ -11,7 +11,7 @@
   
   <!-- WHAT IS YOUR AGE JOKE -->
 
-  <dialog open>
+  <dialog >
     <h1 class="joke">ARE YOU <span>18+?</span></h1>
     <div class="dial-main no-display">
       <h1>Just kidding :)</h1>
@@ -24,6 +24,18 @@
   </dialog>
 
   <h1 class="phrase">That's gonna be easy</h1>
+  <div class="level-box">
+    <p>Level: </p>
+    <div class="level-radio-box">
+      <label for="easy"> Easy
+        <input type="radio" name="level" id="easy" checked></label>
+      <label for="intermediate"> Intermediate
+        <input type="radio" name="level" id="intermediate"></label>
+      <label for="impossible"> Impossible
+        <input type="radio" name="level" id="impossible"></label>
+    </div>
+  </div>
+
   <main>
     <div class="score col-1">
       Your score:
@@ -50,6 +62,7 @@
       <div class="stick"></div>
     </div>
   </main>
+
   <button class="replay">Replay</button>
   <script src="script.js"></script>
 
