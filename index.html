@@ -9,7 +9,7 @@
 </head>
 <body>
 
-  <dialog >
+  <dialog>
     <h1 class="joke">ARE YOU <span>18+?</span></h1>
     <div class="dial-main no-display">
       <h1>Just kidding :)</h1>
@@ -25,6 +25,7 @@
   <div class="level-box">
     <p>Level: </p>
     <div class="level-radio-box">
+      <div class="level-overlay no-display"></div>
       <label for="easy"> Easy
         <input type="radio" name="level" id="easy" checked></label>
       <label for="intermediate"> Intermediate
@@ -37,12 +38,15 @@
   <main>
     <div class="score col-1">
       Your score:
-      <div class="stick" id="bla"></div>
+      <div class="stick"></div>
       <div class="stick"></div>
       <div class="stick"></div>
     </div>
     <div class="overlay no-display"></div>
-    
+    <div class="overlay bigwin no-display">
+      <h1><span></span> WON!</h1>
+      <p>Click REPLAY to play again</p>
+    </div>
     <div class="board">
       <button></button>
       <button></button>

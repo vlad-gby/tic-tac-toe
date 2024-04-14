@@ -289,20 +289,54 @@ const scoreModule = (function(){
   function updateScores(){
     const forPlayer = [Math.floor(playerScore / 5), playerScore % 5];
     const forPc = [Math.floor(pcScore / 5), pcScore % 5];
-
     update(forPlayer, col1);
     update(forPc, col2);
+
+    if(forPc[0] === 3){
+      declareWinner('PC', false);
+      return;
+    } else if(forPlayer[0] === 3){
+      declareWinner('You', true);
+      return;
+    }
   }
+  function declareWinner(who, goodOrBad){
+    const overlay = document.querySelector('.bigwin');
+    const span = document.querySelector('.bigwin span');
+    const h1 = document.querySelector('.bigwin h1');
+    span.textContent = who;
+    if(goodOrBad) h1.style.color = 'rgb(2, 145, 57)';
+    if(!goodOrBad) h1.style.color = 'rgb(145, 66, 2)';
+    overlay.classList.remove('no-display');
+  }
+  function hideDeclaration(){
+    const overlay = document.querySelector('.bigwin');
+    overlay.classList.add('no-display');
+  }
+
   function update(formattedData, col){
     if(formattedData[0]){
       for(let i = 0; i < formattedData[0]; i++){
-        col[i].classList.add('score-5');
+        changeScoreImg(col[i], 5);
       }
-      col[formattedData[0]].classList.add(`score-${formattedData[1]}`);
+      if(formattedData[0] < 3){
+        changeScoreImg(col[formattedData[0]], formattedData[1]);
+      }
+    } else if(!formattedData[0] && !formattedData[1]){
+      for(let i = 0; i < 3; i++){
+        changeScoreImg(col[i], 0);
+      }
     } else{
-      col[0].classList.add(`score-${formattedData[1]}`);
+      changeScoreImg(col[0], formattedData[1]);
     }
   }
+  function changeScoreImg(el, newScore){
+    for(let i = 0; i < 6; i++){
+      el.classList.remove(`score-${i}`);
+    }
+    el.classList.add(`score-${newScore}`);
+  }
+
   function increasePcScore(){
     ++pcScore;
     updateScores();
@@ -310,6 +344,15 @@ const scoreModule = (function(){
   function increasePlayerScore(){
     ++playerScore;
     updateScores();
+  }
+  function clearScore(){
+    pcScore = playerScore = 0;
+    updateScores();
+  }
+  function checkIfStarted(){
+    const occupiedCell = boardFlat.find(cell => cell.value !== null);
+    if(occupiedCell) return true
+    if(pcScore > 0 || playerScore > 0) return true;
   }
   
   const col1 = document.querySelectorAll('.col-1 div');
@@ -320,6 +363,9 @@ const scoreModule = (function(){
   return {
     increasePcScore,
     increasePlayerScore,
+    clearScore,
+    hideDeclaration,
+    checkIfStarted
   }
 
 })();
@@ -346,10 +392,20 @@ const UIModule = (function(){
   const mode = document.querySelectorAll('.mode button');
   const friendBtn = document.querySelector('.with-friend');
   const labels = document.querySelectorAll('.level-radio-box label');
+  const levelOverlay = document.querySelector('.level-overlay');
+  const phrase = document.querySelector('.phrase');
 
   labels.forEach(radio => {
       radio.addEventListener('mouseup', e => {
-      level = radio.lastChild.id;
+        level = radio.lastChild.id;
+        switch (level[1]){
+          case 'a': phrase.textContent = 'That\'s gonna be easy';
+          break;
+          case 'n': phrase.textContent = 'Test yourself';
+          break;
+          case 'm': phrase.textContent = 'You don\'t have a chance';
+          break;
+        }
     });
   });
 
@@ -373,6 +429,9 @@ const UIModule = (function(){
   });
   replay.addEventListener('mouseup', e => {
     gameModule.newGame();
+    scoreModule.clearScore();
+    scoreModule.hideDeclaration();
+    levelOverlay.classList.add('no-display');
   });
 
   // ----------------
@@ -383,6 +442,7 @@ const UIModule = (function(){
     boardFlat[i].cellEl = btnCells[i];
     btnCells[i].addEventListener('mouseup', e => {
       gameModule.move(boardFlat[i], 'X');
+      if(scoreModule.checkIfStarted()) levelOverlay.classList.remove('no-display');
     });
   }
 
