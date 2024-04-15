@@ -199,28 +199,6 @@ button.O::after{
   cursor: pointer;
 }
 
-dialog{
-  position: fixed;
-  top: 0;
-  height: 100vh;
-  width: 100vw;
-  padding: 3rem 1rem;
-  background-color: var(--clr-dark-blue);
-  border: none;
-  color: var(--clr-light-blue);
-  font-family: var(--font-spacemono-regular);
-  font-size: 10vw;
-}
-dialog > h1{
-  font-size: 1em;
-  text-align: center;
-  margin-top: 5rem;
-}
-dialog span{
-  font-size: 1.2em;
-  font-family: var(--font-spacemono-bold);
-  color: rgb(176, 65, 29);
-}
 .no-display{
   display: none !important;
 }

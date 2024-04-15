@@ -375,15 +375,6 @@ const scoreModule = (function(){
 
 const UIModule = (function(){
 
-  // DIALOG:
-  const joke = document.querySelector('.joke');
-  const main = document.querySelector('.dial-main');
-  
-  setTimeout(() => {
-    joke.classList.add('no-display');
-    main.classList.remove('no-display');
-  }, 1700);
-
   // ---------------
 
   // EVENT LISTENERS:
